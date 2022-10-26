@@ -1,3 +1,15 @@
 ・icrawlerをインストール(画像収集)
 ・参考資料
 https://cd-donki-gorira.hatenablog.com/entry/2021/12/04/194637?_ga=2.38574053.751180675.1638610243-359943590.1630585542
+
+モジュール
+・paz
+paz\examples\face_classification\demo.py
+リアルタイム処理が可能、動作が軽い
+
+インストール
+pip install pypaz --user
+pip install tensorflow
+
+https://github.com/oarriaga/paz
+
