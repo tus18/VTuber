@@ -170,9 +170,9 @@ class VideoPlayer(object):
         self.topic = topic
 
         #追記
-        face_detector = dlib.get_frontal_face_detector()
-        self.face_parts_detector = dlib.shape_predictor("D:\ドキュメント\openCV_program\emotion\shape_predictor_68_face_landmarks.dat")
-        self.face_cascade = cv2.CascadeClassifier('D:\ドキュメント\openCV_program\emotion\haarcascade_frontalface_default.xml')
+        self.face_detector = dlib.get_frontal_face_detector()
+        #self.face_parts_detector = dlib.shape_predictor(".\shape_predictor_68_face_landmarks.dat.bz2")
+        self.face_cascade = cv2.CascadeClassifier('.\haarcascade_frontalface_default.xml')
         img1="D:\ドキュメント\openCV_program\emotion\main.png"
         img2="D:\ドキュメント\openCV_program\emotion\close.png"
         img3="D:\ドキュメント\openCV_program\emotion\happy.png"
@@ -188,7 +188,7 @@ class VideoPlayer(object):
 
         #追記
     def overlayImage(self,src, overlay, location, size):
-        overlay_height, overlay_width = overlay.shape[:2]
+        self.overlay_height, self.overlay_width = overlay.shape[:2]
 
         src = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
         pil_src = Image.fromarray(src)
@@ -260,13 +260,21 @@ class VideoPlayer(object):
             output = self.step()
             if output is None:
                 continue
+            #表情に応じた処理
+            if len(output["boxes2D"]) ==1:
+                tmp = output["boxes2D"][0].class_name
+                if tmp == "neutral":
+                    print(tmp)
+                x = output["boxes2D"][0].x_min
+                y = output["boxes2D"][0].y_min
+                print(x+" "+ y)
             image = resize_image(output[self.topic], tuple(self.image_size))
 
             #追記
-            rgb,eye = self.face_landmark_find(image)
-            gray = cv2.cvtColor(rgb,cv2.COLOR_BGR2GRAY)
+            #rgb,eye = self.face_landmark_find(image)
+            """gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
             face = self.face_cascade.detectMultiScale(gray,1.3,5)
-            print(eye)
+            #print(eye)
             if face != ():
                 (self.x,self.y,self.w,self.h) = face[0]
                 self.x=self.x-1
@@ -277,8 +285,10 @@ class VideoPlayer(object):
                     rgb = self.overlayImage(rgb, self.cv_img2, (self.x, self.y), (self.w, self.h))
                 elif eye >= 0.2:
                     rgb = self.overlayImage(rgb, self.cv_img1, (self.x, self.y), (self.w, self.h))
+            if tmp == "neutral":
+                image = self.overlayImage(image, self.cv_img1, (self.x, self.y), (self.w, self.h))"""
 
-            show_image(rgb, 'inference', wait=False)
+            show_image(image, 'inference', wait=False)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
         self.camera.stop()

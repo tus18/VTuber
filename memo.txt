@@ -13,3 +13,9 @@ pip install tensorflow
 
 https://github.com/oarriaga/paz
 
+C:\Users\yuuta\AppData\Roaming\Python\Python310\site-packages\paz\backend\camera.py
+193あたりのコードを変更して、dlibの処理を入れる
+
+pazをつかってイラストを表示（pazのコードを変更して）
+表情によって、表示イラストを変更
+Dlibの処理を追加する

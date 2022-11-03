@@ -1,10 +1,7 @@
-from operator import truediv
 import cv2 as cv
 import dlib
 from imutils import face_utils
 from scipy.spatial import distance
-import random
-from msvcrt import getch
 import numpy as np
 from PIL import Image
 

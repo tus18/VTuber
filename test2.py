@@ -1,26 +1,32 @@
-from fer import FER
-import matplotlib.pyplot as plt
+import argparse
+from paz.backend.camera import VideoPlayer
+from paz.backend.camera import Camera
+from paz.pipelines import DetectMiniXceptionFER
 import cv2 as cv
-#処理が遅すぎる
+import dlib
+from imutils import face_utils
+from scipy.spatial import distance
+import numpy as np
+from PIL import Image
+
 WIDTH = 1920
 HEIGHT = 1080
 
-cap = cv.VideoCapture(0)
-cap.set(cv.CAP_PROP_FRAME_WIDTH, WIDTH)
-cap.set(cv.CAP_PROP_FRAME_HEIGHT, HEIGHT)
+face_cascade = cv.CascadeClassifier('haarcascade_frontalface_alt2.xml')
 
-while True:
-    ret,rgb = cap.read()
-    #test_image_one = plt.imread("./ang_imgs\cut_image_drink1.jpg")
-    emo_detector = FER(mtcnn=True)
-    captured_emotion = emo_detector.detect_emotions(rgb)
-    print(captured_emotion)
-    dominant_emotion, emotion_score = emo_detector.top_emotion(rgb)
-    cv.imshow("flame",rgb)
-    print(dominant_emotion, emotion_score)
 
-    if cv.waitKey(1) == 27:
-        break
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Real-time face classifier')
+    parser.add_argument('-c', '--camera_id', type=int, default=0,
+                        help='Camera device ID')
+    parser.add_argument('-o', '--offset', type=float, default=0.1,
+                        help='Scaled offset to be added to bounding boxes')
+    args = parser.parse_args()
 
-cap.release()
-cv.destroyAllWindows()
+    pipeline = DetectMiniXceptionFER([args.offset, args.offset])
+    camera = Camera(args.camera_id)
+    player = VideoPlayer((640, 480), pipeline, camera)
+    player.run()
+    print("hello")
+
+
