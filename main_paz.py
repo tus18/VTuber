@@ -64,13 +64,14 @@ if __name__ == "__main__":
     imag4=".\images\happy_close.png"
     cv_img1 = cv2.imread(imag1,cv2.IMREAD_UNCHANGED)
     cv_img2 = cv2.imread(imag2,cv2.IMREAD_UNCHANGED)
-    cv_img3 = cv2.imread(imag3,cv2.IMREAD_UNCHANGED)
-    cv_img4 = cv2.imread(imag4,cv2.IMREAD_UNCHANGED)
+    close_1 = cv2.imread(imag3,cv2.IMREAD_UNCHANGED)
+    close_2 = cv2.imread(imag4,cv2.IMREAD_UNCHANGED)
 
 
     pipeline = DetectMiniXceptionFER([0.1, 0.1])
 
     camera = cv2.VideoCapture(0)
+    emotion = "neutral"
     while True:
         ret,image = camera.read()
         image = cv2.cvtColor(image,BGR2RGB)
@@ -83,6 +84,7 @@ if __name__ == "__main__":
             x_min, y_min, x_max, y_max = output["boxes2D"][0].coordinates
             w,h = (x_max-x_min,y_max-y_min)
             x,y =x_min,y_min
+            emotion = output["boxes2D"][0].class_name
         if w != 0:
             if eye < 0.2:
                 image =overlayImage(image,cv_img1,(x,y),(w,h))
