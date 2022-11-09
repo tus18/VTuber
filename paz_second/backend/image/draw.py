@@ -2,11 +2,12 @@ import numpy as np
 import colorsys
 import random
 import cv2
-
+import PIL as Image
 GREEN = (0, 255, 0)
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 LINE = cv2.LINE_AA
 FILLED = cv2.FILLED
+
 
 
 def draw_square(image, center, color, size):
@@ -135,6 +136,39 @@ def draw_rectangle(image, corner_A, corner_B, color, thickness):
     """
     return cv2.rectangle(
         image, tuple(corner_A), tuple(corner_B), tuple(color), thickness)
+
+def overlayImage_int(imag):
+    imag1=imag
+    cv2.imshow("imag",imag1)
+
+def overlayImage(src, location, size, emotion):
+    """img1=".\main.png"
+    #img2="D:\ドキュメント\openCV_program\emotion\close.png"
+    img3=".\happy.png"
+    #img4="D:\ドキュメント\openCV_program\emotion\ang.png"
+
+    cv_img1 = cv2.imread(img1,cv2.IMREAD_UNCHANGED)
+    #cv_img2 = cv2.imread(img2,cv2.IMREAD_UNCHANGED)
+    cv_img3 = cv2.imread(img3,cv2.IMREAD_UNCHANGED)
+    #cv_img4 = cv2.imread(img4,cv2.IMREAD_UNCHANGED)"""
+
+    src = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
+    pil_src = Image.fromarray(src)
+    pil_src = pil_src.convert('RGBA')
+
+    overlay = cv2.cvtColor(overlay, cv2.COLOR_BGRA2RGBA)
+    pil_overlay = Image.fromarray(overlay)
+    pil_overlay = pil_overlay.convert('RGBA')
+    #顏の大きさに合わせてリサイズ
+    pil_overlay = pil_overlay.resize(size)
+
+    # 画像を合成
+    pil_tmp = Image.new('RGBA', pil_src.size, (255, 255, 255, 0))
+    pil_tmp.paste(pil_overlay, location, pil_overlay)
+    result_image = Image.alpha_composite(pil_src, pil_tmp)
+
+    # OpenCV形式に変換
+    return cv2.cvtColor(np.asarray(result_image), cv2.COLOR_RGBA2BGRA)
 
 
 def draw_dot(image, point, color=GREEN, radius=5, filled=FILLED):

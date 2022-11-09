@@ -4,11 +4,6 @@ import numpy as np
 from ..backend.image import resize_image, convert_color_space, show_image
 from ..backend.image import BGR2RGB
 
-import dlib
-from imutils import face_utils
-from scipy.spatial import distance
-import numpy as np
-from PIL import Image
 
 class Camera(object):
     """Camera abstract class.
@@ -169,69 +164,6 @@ class VideoPlayer(object):
         self.camera = camera
         self.topic = topic
 
-        #追記
-        self.face_detector = dlib.get_frontal_face_detector()
-        #self.face_parts_detector = dlib.shape_predictor(".\shape_predictor_68_face_landmarks.dat.bz2")
-        self.face_cascade = cv2.CascadeClassifier('.\haarcascade_frontalface_default.xml')
-        img1="D:\ドキュメント\openCV_program\emotion\main.png"
-        img2="D:\ドキュメント\openCV_program\emotion\close.png"
-        img3="D:\ドキュメント\openCV_program\emotion\happy.png"
-        img4="D:\ドキュメント\openCV_program\emotion\ang.png"
-        self.cv_img1 = cv2.imread(img1,cv2.IMREAD_UNCHANGED)
-        self.cv_img2 = cv2.imread(img2,cv2.IMREAD_UNCHANGED)
-        self.cv_img3 = cv2.imread(img3,cv2.IMREAD_UNCHANGED)
-        self.cv_img4 = cv2.imread(img4,cv2.IMREAD_UNCHANGED)
-        self.x=0
-        self.y=0
-        self.w=0
-        self.h=0
-
-        #追記
-    def overlayImage(self,src, overlay, location, size):
-        self.overlay_height, self.overlay_width = overlay.shape[:2]
-
-        src = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
-        pil_src = Image.fromarray(src)
-        pil_src = pil_src.convert('RGBA')
-
-        overlay = cv2.cvtColor(overlay, cv2.COLOR_BGRA2RGBA)
-        pil_overlay = Image.fromarray(overlay)
-        pil_overlay = pil_overlay.convert('RGBA')
-        #顏の大きさに合わせてリサイズ
-        pil_overlay = pil_overlay.resize(size)
-
-        # 画像を合成
-        pil_tmp = Image.new('RGBA', pil_src.size, (255, 255, 255, 0))
-        pil_tmp.paste(pil_overlay, location, pil_overlay)
-        result_image = Image.alpha_composite(pil_src, pil_tmp)
-
-        # OpenCV形式に変換
-        return cv2.cvtColor(np.asarray(result_image), cv2.COLOR_RGBA2BGRA)
-
-        #追記
-    def calc_ear(self,eye):
-        A = distance.euclidean(eye[1], eye[5])
-        B = distance.euclidean(eye[2], eye[4])
-        C = distance.euclidean(eye[0], eye[3])
-        eye_ear = (A + B) / (2.0 * C)
-        return eye_ear
-
-        #追記
-    def face_landmark_find(self,img):
-        eye = 10
-
-        img_gry = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = self.face_detector(img_gry, 1)
-
-        for face in faces:
-            landmark = self.face_parts_detector(img_gry, face)
-            landmark = face_utils.shape_to_np(landmark)
-
-            left_eye_ear = self.calc_ear(landmark[42:48])
-            right_eye_ear = self.calc_ear(landmark[36:42])
-            eye = (left_eye_ear + right_eye_ear) / 2.0
-
-        return img,eye
 
     def step(self):
         """ Runs the pipeline process once
@@ -261,32 +193,14 @@ class VideoPlayer(object):
             if output is None:
                 continue
             #表情に応じた処理
-            if len(output["boxes2D"]) ==1:
+            """if len(output["boxes2D"]) ==1:
                 tmp = output["boxes2D"][0].class_name
                 if tmp == "neutral":
-                    print(tmp)
-                x = output["boxes2D"][0].x_min
-                y = output["boxes2D"][0].y_min
-                print(x+" "+ y)
+                    print(tmp)"""
+                #x = output["boxes2D"][0].topic
+                #y = output["boxes2D"][0].
+                #print(x)
             image = resize_image(output[self.topic], tuple(self.image_size))
-
-            #追記
-            #rgb,eye = self.face_landmark_find(image)
-            """gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-            face = self.face_cascade.detectMultiScale(gray,1.3,5)
-            #print(eye)
-            if face != ():
-                (self.x,self.y,self.w,self.h) = face[0]
-                self.x=self.x-1
-                self.w=self.w+2
-                self.h=self.h+2                
-            if self.w != 0:
-                if eye < 0.2:
-                    rgb = self.overlayImage(rgb, self.cv_img2, (self.x, self.y), (self.w, self.h))
-                elif eye >= 0.2:
-                    rgb = self.overlayImage(rgb, self.cv_img1, (self.x, self.y), (self.w, self.h))
-            if tmp == "neutral":
-                image = self.overlayImage(image, self.cv_img1, (self.x, self.y), (self.w, self.h))"""
 
             show_image(image, 'inference', wait=False)
             if cv2.waitKey(1) & 0xFF == ord('q'):

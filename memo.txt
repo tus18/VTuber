@@ -19,3 +19,7 @@ C:\Users\yuuta\AppData\Roaming\Python\Python310\site-packages\paz\backend\camera
 pazをつかってイラストを表示（pazのコードを変更して）
 表情によって、表示イラストを変更
 Dlibの処理を追加する
+
+D:\ドキュメント\openCV_program\emotion\paz_second\backend\image\draw.py
+上記のファイルのDrawBoxes2Dで画像の上に描く関数を呼び出している
+感情を示す文字はそのまま使用し、□は消して画像のリサイズ＆表示に利用する。

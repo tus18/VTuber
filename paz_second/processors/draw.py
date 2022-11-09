@@ -18,6 +18,7 @@ from ..backend.groups import quaternion_to_rotation_matrix
 from ..backend.keypoints import project_to_image
 from ..datasets import HUMAN_JOINT_CONFIG
 from ..datasets import MINIMAL_HAND_CONFIG
+import my
 
 
 class DrawBoxes2D(Processor):
