@@ -11,6 +11,24 @@ RGB2BGR = cv2.COLOR_RGB2BGR
 face_detector = dlib.get_frontal_face_detector()
 face_parts_detector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
+def eye_init(camera):
+    count = 0
+    while True:
+        ret,image = camera.read()
+        image = cv2.cvtColor(image,BGR2RGB)
+        output = pipeline(image)
+        image = output["image"]
+        image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
+        image,eye = face_landmark_find(image)
+        #目を閉じたときの写真を撮る
+        #小さい数から10個ほどの平均値をとるなど
+        
+
+        cv2.imshow("frame", image)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+
 def overlayImage(src, overlay, location, size):
     src = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
     pil_src = Image.fromarray(src)
@@ -71,6 +89,7 @@ if __name__ == "__main__":
     pipeline = DetectMiniXceptionFER([0.1, 0.1])
 
     camera = cv2.VideoCapture(0)
+    eye_init(camera)
     emotion = "neutral"
     while True:
         ret,image = camera.read()
@@ -85,12 +104,18 @@ if __name__ == "__main__":
             w,h = (x_max-x_min,y_max-y_min)
             x,y =x_min,y_min
             emotion = output["boxes2D"][0].class_name
+        if emotion == "neutral":
+            overlay = cv_img1
+            close = close_1
+        elif emotion == "happy":
+            overlay = cv_img2
+            close =close_2
         if w != 0:
             if eye < 0.2:
-                image =overlayImage(image,cv_img1,(x,y),(w,h))
+                image =overlayImage(image,close,(x,y),(w,h))
                 print("目が閉じている")
             elif eye >= 0.2:
-                image = overlayImage(image,cv_img2,(x,y),(w,h))
+                image = overlayImage(image,overlay,(x,y),(w,h))
 
         cv2.imshow("frame", image)
         if cv2.waitKey(1) & 0xFF == ord('q'):
