@@ -33,21 +33,23 @@ def face_landmark_find(img):
     return img,eye
 
 def setting():
-    f = open('user.txt', 'w')
+    #f = open('user.txt', 'w')
     count = 0
+    eye_data =[]
     while True:
         ret,rgb = cap.read()
         rgb,eye = face_landmark_find(rgb)
-        eye_data = eye
+        eye_data.append = (eye)
         if ret == True:
             count +=1
+        cv2.imshow("image",rgb)
         if(count > 100):
+            print(eye_data)
+            cap.release()
+            cv2.destroyAllWindows()
             break
 
-    f.write('こんにちは\n')
-    f.write('こんにちは\n')
-    f.write('こんにちは\n')
-    f.close()
+    #f.close()
 
 def count_file():
     f=open('user.txt')

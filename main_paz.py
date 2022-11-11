@@ -10,7 +10,7 @@ import dlib
 RGB2BGR = cv2.COLOR_RGB2BGR
 face_detector = dlib.get_frontal_face_detector()
 face_parts_detector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-
+"""
 def eye_init(camera):
     count = 0
     while True:
@@ -27,7 +27,7 @@ def eye_init(camera):
         cv2.imshow("frame", image)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+"""
 
 def overlayImage(src, overlay, location, size):
     src = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     pipeline = DetectMiniXceptionFER([0.1, 0.1])
 
     camera = cv2.VideoCapture(0)
-    eye_init(camera)
+    #eye_init(camera)
     emotion = "neutral"
     while True:
         ret,image = camera.read()
