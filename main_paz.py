@@ -6,6 +6,7 @@ from PIL import Image
 from scipy.spatial import distance
 from imutils import face_utils
 import dlib
+import test
 
 RGB2BGR = cv2.COLOR_RGB2BGR
 face_detector = dlib.get_frontal_face_detector()
@@ -72,6 +73,12 @@ def face_landmark_find(img):
     return img,eye
 
 if __name__ == "__main__":
+    test.insert()
+    f = open('user.txt')
+    lins = f.readlines()
+    print('推奨する設定値は'+lins[0]+'です')
+    #print('設定値を入力してください')
+    EYE_AR_THRESH = float(input('設定値を入力してください'))
     x = 0
     y = 0
     w = 0
@@ -85,6 +92,7 @@ if __name__ == "__main__":
     close_1 = cv2.imread(imag3,cv2.IMREAD_UNCHANGED)
     close_2 = cv2.imread(imag4,cv2.IMREAD_UNCHANGED)
 
+    #EYE_AR_THRESH = 0.11
 
     pipeline = DetectMiniXceptionFER([0.1, 0.1])
 
@@ -98,6 +106,7 @@ if __name__ == "__main__":
         image = output["image"]
         image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
         image,eye = face_landmark_find(image)
+        #print(eye)
         if len(output["boxes2D"]) ==1:
             image = cv2.resize(image,(640,480),interpolation=cv2.INTER_LINEAR)
             x_min, y_min, x_max, y_max = output["boxes2D"][0].coordinates
@@ -111,10 +120,11 @@ if __name__ == "__main__":
             overlay = cv_img2
             close =close_2
         if w != 0:
-            if eye < 0.2:
+            #0.14324156876906563
+            if eye < EYE_AR_THRESH:
                 image =overlayImage(image,close,(x,y),(w,h))
-                print("目が閉じている")
-            elif eye >= 0.2:
+                #print("目が閉じている")
+            elif eye >= EYE_AR_THRESH:
                 image = overlayImage(image,overlay,(x,y),(w,h))
 
         cv2.imshow("frame", image)

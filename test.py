@@ -3,6 +3,7 @@ import cv2
 import dlib
 from imutils import face_utils
 from scipy.spatial import distance
+import math
 
 face_detector = dlib.get_frontal_face_detector()
 cap = cv2.VideoCapture(0)
@@ -30,26 +31,32 @@ def face_landmark_find(img):
         right_eye_ear = calc_ear(landmark[36:42])
         eye = (left_eye_ear + right_eye_ear) / 2.0
 
-    return img,eye
+    return eye
 
 def setting():
-    #f = open('user.txt', 'w')
+    f = open('user.txt', 'w')
     count = 0
-    eye_data =[]
+    eye_sum=0
+    #eye_data =[]
     while True:
         ret,rgb = cap.read()
-        rgb,eye = face_landmark_find(rgb)
-        eye_data.append = (eye)
+        eye = face_landmark_find(rgb)
+        #eye_data.append = (eye)
+        
         if ret == True:
             count +=1
+            eye_sum += eye
         cv2.imshow("image",rgb)
-        if(count > 100):
-            print(eye_data)
+        if(count > 50):
+            #print(eye_data)
+            print(eye_sum/50)
             cap.release()
             cv2.destroyAllWindows()
+            x=eye_sum/50+0.01
             break
-
-    #f.close()
+    x = math.floor(x*100)/100
+    f.write(str(x))
+    f.close()
 
 def count_file():
     f=open('user.txt')
@@ -59,15 +66,16 @@ def count_file():
     print(count)
     f.close()
 
-r = os.path.exists('user.txt')
-print(r) # True (存在する)
-if r == False:
-    print("初期設定を行います")
-    print("目を閉じてください")
-    setting()
-elif r == True:
-    f = open('user.txt')
-    lins = f.readlines()
-    print(lins[0])
-    count_file()
-    f.close()
+def insert():
+    r = os.path.exists('user.txt')
+    print(r) # True (存在する)
+    if r == False:
+        print("初期設定を行います")
+        print("目を閉じてください")
+        setting()
+    elif r == True:
+        f = open('user.txt')
+        lins = f.readlines()
+        print(lins[0])
+        count_file()
+        f.close()
