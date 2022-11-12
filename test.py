@@ -41,15 +41,15 @@ def setting():
         ret,rgb = cap.read()
         eye = face_landmark_find(rgb)
         if ret == True:
-            count +=1
-            eye_sum += eye
-        cv2.imshow("image",rgb)
+            if eye != 10:
+                count +=1
+                eye_sum += eye
         if(count > 50):
             print(eye_sum/50)
-            cap.release()
-            cv2.destroyAllWindows()
             x=eye_sum/50+0.01
             break
+    cap.release()
+    cv2.destroyAllWindows()
     x = math.floor(x*100)/100
     f.write(str(x)+'\n')
     f.close()
@@ -62,6 +62,13 @@ def count_file():
     print(count)
     f.close()
 
+def eye_int():
+    f = open('user.txt','r+')
+    lins = f.readlines()
+    print('推奨する設定値は'+lins[0]+'です')
+    tmp = input('設定値を入力してください:')
+    f.write(tmp)
+
 def insert():
     r = os.path.exists('user.txt')
     print(r) # True (存在する)
@@ -69,8 +76,14 @@ def insert():
         print("初期設定を行います")
         print("目を閉じてください")
         setting()
+        eye_int()
     elif r == True:
         count = len(open('user.txt').readlines())
         if count == 0:
+            print("初期設定を行います")
+            print("目を閉じてください")
             setting()
+            eye_int()
+        elif count == 1:
+            eye_int()
 

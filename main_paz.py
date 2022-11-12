@@ -57,21 +57,10 @@ def face_landmark_find(img):
     return img,eye
 
 if __name__ == "__main__":
-    count = len(open('user.txt').readlines())
-    EYE_AR_THRESH = 0
-    if count == 0:
-        test.insert()
-    elif count == 1:     
-        f = open('user.txt','r+')
-        lins = f.readlines()
-        print('推奨する設定値は'+lins[0]+'です')
-        EYE_AR_THRESH = float(input('設定値を入力してください'))
-        f.write(str(EYE_AR_THRESH))
-        f.close()
-    else:
-        f = open('user.txt')
-        lins = f.readlines()
-        EYE_AR_THRESH = float(lins[1])
+    test.insert()
+    f = open('user.txt')
+    lins = f.readlines()
+    EYE_AR_THRESH = float(lins[1])
 
     print(EYE_AR_THRESH)
     x = 0
