@@ -8,7 +8,7 @@ import math
 face_detector = dlib.get_frontal_face_detector()
 cap = cv2.VideoCapture(0)
 face_parts_detector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 def calc_ear(eye):
     A = distance.euclidean(eye[1], eye[5])
@@ -37,25 +37,21 @@ def setting():
     f = open('user.txt', 'w')
     count = 0
     eye_sum=0
-    #eye_data =[]
     while True:
         ret,rgb = cap.read()
         eye = face_landmark_find(rgb)
-        #eye_data.append = (eye)
-        
         if ret == True:
             count +=1
             eye_sum += eye
         cv2.imshow("image",rgb)
         if(count > 50):
-            #print(eye_data)
             print(eye_sum/50)
             cap.release()
             cv2.destroyAllWindows()
             x=eye_sum/50+0.01
             break
     x = math.floor(x*100)/100
-    f.write(str(x))
+    f.write(str(x)+'\n')
     f.close()
 
 def count_file():
@@ -74,8 +70,7 @@ def insert():
         print("目を閉じてください")
         setting()
     elif r == True:
-        f = open('user.txt')
-        lins = f.readlines()
-        print(lins[0])
-        count_file()
-        f.close()
+        count = len(open('user.txt').readlines())
+        if count == 0:
+            setting()
+

@@ -11,24 +11,8 @@ import test
 RGB2BGR = cv2.COLOR_RGB2BGR
 face_detector = dlib.get_frontal_face_detector()
 face_parts_detector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-"""
-def eye_init(camera):
-    count = 0
-    while True:
-        ret,image = camera.read()
-        image = cv2.cvtColor(image,BGR2RGB)
-        output = pipeline(image)
-        image = output["image"]
-        image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
-        image,eye = face_landmark_find(image)
-        #目を閉じたときの写真を撮る
-        #小さい数から10個ほどの平均値をとるなど
-        
 
-        cv2.imshow("frame", image)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-"""
+#感情の種類:angry,disgust,fear,happy,sad,surprise,neutral
 
 def overlayImage(src, overlay, location, size):
     src = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
@@ -73,32 +57,46 @@ def face_landmark_find(img):
     return img,eye
 
 if __name__ == "__main__":
-    test.insert()
-    f = open('user.txt')
-    lins = f.readlines()
-    print('推奨する設定値は'+lins[0]+'です')
-    #print('設定値を入力してください')
-    EYE_AR_THRESH = float(input('設定値を入力してください'))
+    count = len(open('user.txt').readlines())
+    EYE_AR_THRESH = 0
+    if count == 0:
+        test.insert()
+    elif count == 1:     
+        f = open('user.txt','r+')
+        lins = f.readlines()
+        print('推奨する設定値は'+lins[0]+'です')
+        EYE_AR_THRESH = float(input('設定値を入力してください'))
+        f.write(str(EYE_AR_THRESH))
+        f.close()
+    else:
+        f = open('user.txt')
+        lins = f.readlines()
+        EYE_AR_THRESH = float(lins[1])
+
+    print(EYE_AR_THRESH)
     x = 0
     y = 0
     w = 0
     h = 0
-    imag1=".\images\main.png"
-    imag2=".\images\happy.png"
-    imag3=".\images\close.png"
-    imag4=".\images\happy_close.png"
+    imag1 = "./images/main.png"
+    imag2 = "./images/happy.png"
+    imag3 = "./images/close.png"
+    imag4 = "./images/happy_close.png"
+    imag5 = "./images/angry.png"
+    imag6 = "./images/angry_close.png"
     cv_img1 = cv2.imread(imag1,cv2.IMREAD_UNCHANGED)
     cv_img2 = cv2.imread(imag2,cv2.IMREAD_UNCHANGED)
+    cv_img3 = cv2.imread(imag5,cv2.IMREAD_UNCHANGED)
     close_1 = cv2.imread(imag3,cv2.IMREAD_UNCHANGED)
     close_2 = cv2.imread(imag4,cv2.IMREAD_UNCHANGED)
-
-    #EYE_AR_THRESH = 0.11
+    close_3 = cv2.imread(imag6,cv2.IMREAD_UNCHANGED)
 
     pipeline = DetectMiniXceptionFER([0.1, 0.1])
 
     camera = cv2.VideoCapture(0)
-    #eye_init(camera)
     emotion = "neutral"
+    overlay = cv_img1
+    close = close_1
     while True:
         ret,image = camera.read()
         image = cv2.cvtColor(image,BGR2RGB)
@@ -106,24 +104,25 @@ if __name__ == "__main__":
         image = output["image"]
         image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
         image,eye = face_landmark_find(image)
-        #print(eye)
         if len(output["boxes2D"]) ==1:
             image = cv2.resize(image,(640,480),interpolation=cv2.INTER_LINEAR)
             x_min, y_min, x_max, y_max = output["boxes2D"][0].coordinates
             w,h = (x_max-x_min,y_max-y_min)
             x,y =x_min,y_min
             emotion = output["boxes2D"][0].class_name
+        
         if emotion == "neutral":
             overlay = cv_img1
             close = close_1
         elif emotion == "happy":
             overlay = cv_img2
-            close =close_2
+            close = close_2
+        elif emotion == "angry":
+            overlay = cv_img3
+            close = close_3
         if w != 0:
-            #0.14324156876906563
             if eye < EYE_AR_THRESH:
-                image =overlayImage(image,close,(x,y),(w,h))
-                #print("目が閉じている")
+                image = overlayImage(image,close,(x,y),(w,h))
             elif eye >= EYE_AR_THRESH:
                 image = overlayImage(image,overlay,(x,y),(w,h))
 
