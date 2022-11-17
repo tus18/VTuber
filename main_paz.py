@@ -8,7 +8,6 @@ from imutils import face_utils
 import dlib
 import test
 
-RGB2BGR = cv2.COLOR_RGB2BGR
 face_detector = dlib.get_frontal_face_detector()
 face_parts_detector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
