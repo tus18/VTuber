@@ -1,7 +1,6 @@
 from paz_second.pipelines import DetectMiniXceptionFER
 import cv2
 import numpy as np
-from paz_second.backend.image import BGR2RGB
 from PIL import Image
 from scipy.spatial import distance
 from imutils import face_utils
@@ -91,7 +90,7 @@ if __name__ == "__main__":
     camera = cv2.VideoCapture(0)
     while True:
         ret,image = camera.read()
-        image = cv2.cvtColor(image,BGR2RGB)
+        image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
         output = pipeline(image)
         image = output["image"]
         if len(output["boxes2D"]) ==1:

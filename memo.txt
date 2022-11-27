@@ -25,3 +25,6 @@ D:\ドキュメント\openCV_program\emotion\paz_second\backend\image\draw.py
 感情を示す文字はそのまま使用し、□は消して画像のリサイズ＆表示に利用する。
 
 https://www.javadrive.jp/python/list/index11.html
+
+69,70
+paz_second\processors\draw.py

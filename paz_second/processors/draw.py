@@ -66,8 +66,8 @@ class DrawBoxes2D(Processor):
                 text = '{:0.2f}, {}'.format(box2D.score, class_name)
             if not self.with_score:
                 text = '{}'.format(class_name)
-            put_text(image, text, (x_min, y_min - 10), self.scale, color, 1)
-            draw_rectangle(image, (x_min, y_min), (x_max, y_max), color, 2)
+            #put_text(image, text, (x_min, y_min - 10), self.scale, color, 1)
+            #draw_rectangle(image, (x_min, y_min), (x_max, y_max), color, 2)
         return image
 
 
